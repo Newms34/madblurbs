@@ -117,7 +117,7 @@
         <div class='row'>
             <h3>Arrangement</h3>
             <hr>
-            <div class='jumbotron' id='blurb-order'><span ng-repeat='b in allBlurbs' class='one-blurb' ng-class='{"blurb-inst":b.type}'><button class='btn-primary blurb-arrange-button' ng-click='moveLeft($index);'>&lt;</button> {{b.type?b.type:b}} <button class='btn-primary blurb-arrange-button' ng-click='moveRight($index);'>&gt;</button></span></div>
+            <div class='jumbotron' id='blurb-order'><span ng-repeat='b in allBlurbs' class='one-blurb' ng-class='{"blurb-inst":b.type}'><button class='btn-primary blurb-arrange-button' ng-click='moveLeft($index);'>&lt;</button> {{b.subtype?b.subtype:b}} <button class='btn-primary blurb-arrange-button' ng-click='moveRight($index);'>&gt;</button></span></div>
             <hr>
         </div>
         <div class='row'>
