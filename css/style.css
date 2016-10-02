@@ -1,0 +1,39 @@
+html,body{
+	width:100%;
+	height:100%;
+	margin:0;
+}
+.dark-fade{
+	width:100%;
+	position:absolute;
+	top:0px;
+	height:100%;
+	background:rgba(0,0,0,.5);
+}
+#aw,#af{
+	left:15%;
+	top:5%;
+}
+#af textarea{
+	width:95%;
+	left:2%;
+	height:200px;
+}
+.blurb-inst{
+	border-radius:5px;
+	padding:8px;
+	font-size: larger;
+	margin-right:5px;
+	background:#ccf;
+}
+table,tbody{
+	transition-duration:.5s;
+}
+.blurb-arrange-button{
+	border-radius:3px;
+	opacity:0;
+	transition-duration:.5s;
+}
+.one-blurb:hover > .blurb-arrange-button{
+	opacity:1;
+}

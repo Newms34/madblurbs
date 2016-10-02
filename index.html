@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Auto Mad-libs Generator</title>
+    <link rel="stylesheet" type="text/css" href="./css/style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
+
+<body ng-app='ml' ng-controller='ml-con'>
+    <div class='container'>
+        <div class='row'>
+        <button class='btn btn-danger btn-lg' ng-click='clearIt();' ng-disabled = '!allBlurbs.length'>
+                    X Clear All</button>
+            <h3>Words:</h3>
+            <div id='main' class='col-md-8 offset-md-4'>
+                
+                <table class='table table-striped'>
+                    <thead>
+                        <tr>
+                            <th>Number</th>
+                            <th>Type</th>
+                            <th>Subtype</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat='w in words'>
+                            <td>{{$index+1}}</td>
+                            <td>{{w.type}}</td>
+                            <td>{{w.subtype}}</td>
+                            <td>
+                                <button class='btn btn-danger' ng-click='removeWord($index)'>x</button>
+                            </td>
+                        </tr>
+                        <tr ng-show='words.length<1'>
+                            <td colspan=4><i>None yet!</i></td>
+                        </tr>
+                        <tr>
+                            <td colspan=4 style='text-align:center;'>
+                                <button class='btn btn-success col-md-10' ng-click='pickinWord=true'>
+                                    <h4>+ Add Word</h4></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <br>
+        <br>
+        <div class='row'>
+            <h3>Fragments:</h3>
+            <div id='main' class='col-md-8 offset-md-4'>
+                <table class='table table-striped'>
+                    <thead>
+                        <tr>
+                            <th>Number</th>
+                            <th>Text</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat='txt in frags'>
+                            <td>{{$index+1}}</td>
+                            <td>{{txt}}</td>
+                            <td>
+                                <button class='btn btn-danger' ng-click='removeFrag($index)'>x</button>
+                            </td>
+                        </tr>
+                        <tr ng-show='frags.length<1'>
+                            <td colspan=3><i>None yet!</i></td>
+                        </tr>
+                        <tr>
+                            <td colspan=3 style='text-align:center;'>
+                                <button class='btn btn-success col-md-10' ng-click='addFrag=true'>
+                                    <h4>+ Add Fragment</h4></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class='row'>
+            <h3>Punctuation:</h3>
+            <div id='main' class='col-md-8 offset-md-4'>
+                <table class='table table-striped'>
+                    <thead>
+                        <tr>
+                            <th>Number</th>
+                            <th>Type</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat='p in puncs'>
+                            <td>{{$index+1}}</td>
+                            <td>{{p.type}}</td>
+                            <td>
+                                <button class='btn btn-danger' ng-click='removePunct($index)'>x</button>
+                            </td>
+                        </tr>
+                        <tr ng-show='puncs.length<1'>
+                            <td colspan=4><i>None yet!</i></td>
+                        </tr>
+                        <tr>
+                            <td colspan=4 style='text-align:center;'>
+                                <button class='btn btn-success col-md-10' ng-click='addPunc=true'>
+                                    <h4>+ Add Punctuation</h4></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <br>
+        <br>
+        <div class='row'>
+            <h3>Arrangement</h3>
+            <hr>
+            <div class='jumbotron' id='blurb-order'><span ng-repeat='b in allBlurbs' class='one-blurb' ng-class='{"blurb-inst":b.type}'><button class='btn-primary blurb-arrange-button' ng-click='moveLeft($index);'>&lt;</button> {{b.type?b.type:b}} <button class='btn-primary blurb-arrange-button' ng-click='moveRight($index);'>&gt;</button></span></div>
+            <hr>
+        </div>
+        <div class='row'>
+            <h4><input type="checkbox" name="alit" ng-model='alliterate'> Alliterate</h4>
+            <br>
+            <h4><input type="checkbox" name="alit" ng-model='autocap'> Auto-capitalize</h4>
+            <br>
+            <br>
+            <button class='btn btn-success btn-lg col-md-10' style='left:10%' ng-disabled='!allBlurbs.length' ng-click='makeSentence()'>Do it!</button>
+            <br>
+            <br>
+            <hr/>
+            <div id='output' class='jumbotron'>{{fullStr}}</div>
+        </div>
+        <br>
+        <br>
+    </div>
+    <br>
+    <br>
+    <div class='dark-fade' ng-show='pickinWord'>
+        <div class='panel panel-success col-md-8' id='aw'>
+            <div class='panel-heading' style='text-align: center;'>
+                <h2>Add A Word <button class='btn btn-danger' ng-click='pickinWord=false'>x</button></h2>
+            </div>
+            <div class='panel-body'>
+                <h4>Pick a word type:</h4>
+                <select ng-model='currWrdType'>
+                    <option ng-repeat="wrd in wordTypes" value="{{wrd.type}}">{{wrd.type}}</option>
+                </select>
+                <hr>
+                <div ng-show='currWrdType'>
+                    <h4>Now pick a sub-type:</h4>
+                    <select ng-model='currWrdSt' ng-options='st.type for st in getObj(wordTypes,currWrdType).subtypes'>
+                    </select>
+                    <h4>Example: 
+                    	<span class='alert-warning'>{{currWrdSt.ex}}	</span>
+                    </h4>
+                    <hr>
+                    <button class='btn btn-success col-md-10' ng-click='addWrd();'>
+                        <h4>Add!</h4></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class='dark-fade' ng-show='addFrag'>
+        <div class='panel panel-success col-md-8' id='af'>
+            <div class='panel-heading' style='text-align: center;'>
+                <h2>Add A Fragment <button class='btn btn-danger pull-right' ng-click='addFrag=false'>x</button></h2>
+            </div>
+            <div class='panel-body'>
+                <h4>Text to add:</h4>
+                <textarea ng-model='currFrag'></textarea>
+                <hr>
+                <button class='btn btn-success col-md-10' ng-click='addFragment();'>
+                    <h4>Add!</h4></button>
+            </div>
+        </div>
+    </div>
+    <div class='dark-fade' ng-show='addPunc'>
+        <div class='panel panel-success col-md-8' id='aw'>
+            <div class='panel-heading' style='text-align: center;'>
+                <h2>Add Punctuation <button class='btn btn-danger' ng-click='addPunc=false'>x</button></h2>
+            </div>
+            <div class='panel-body'>
+                <h4>Pick a punctuation type:</h4>
+                <select ng-model='currPunc' ng-options='p for p in puncTypes'>
+                    <!-- <option ng-repeat="pu in puncTypes" value="{{wrd.type}}">{{wrd.type}}</option> -->
+                </select>
+                <hr>
+                <button class='btn btn-success col-md-10' ng-click='addPunctuation();'>Add!</button>
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+    <script src="./js/bootbox.min.js"></script>
+    <script src="./js/main.js"></script>
+</body>
+
+</html>
