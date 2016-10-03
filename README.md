@@ -16,7 +16,7 @@ There are three categories of elements you can add.
 
 - The first (and most complicated) is Words. Here, you pick a general category, and then the specific subtype. For example, let's say you want a sentence identical to the following, grammatically: `The dog barks`. You'd pick Verb, and then 3rd sg. Present for the verb type.
 
-- The second is Fragments. These are basically equivalent to the words between the blanks in regular Mad-libs. To use the example from above, let's say you want to make sure your sentence always starts with the word "the". You'd write 'the' as a fragment
+- The second is Fragments. These are basically equivalent to the words between the blanks in regular Mad-libs. To use the example from above, let's say you want to make sure your sentence always starts with the word "the". You'd write 'the' as a fragment.
 
 - The final category is Punctuation. Pretty self-explanatory: if you need punctuation, go ahead and add it.
 

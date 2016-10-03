@@ -72,7 +72,7 @@
                         </tr>
                         <tr>
                             <td colspan=3 style='text-align:center;'>
-                                <button class='btn btn-success col-md-10' ng-click='addFrag=true'>
+                                <button class='btn btn-success col-md-10' ng-click='addFrag=true;currFrag="";'>
                                     <h4>+ Add Fragment</h4></button>
                             </td>
                         </tr>
@@ -117,7 +117,7 @@
         <div class='row'>
             <h3>Arrangement</h3>
             <hr>
-            <div class='jumbotron' id='blurb-order'><span ng-repeat='b in allBlurbs' class='one-blurb' ng-class='{"blurb-inst":b.type}'><button class='btn-primary blurb-arrange-button' ng-click='moveLeft($index);'>&lt;</button> {{b.subtype?b.subtype:b}} <button class='btn-primary blurb-arrange-button' ng-click='moveRight($index);'>&gt;</button></span></div>
+            <div class='jumbotron' id='blurb-order'><span ng-repeat='b in allBlurbs' class='one-blurb' ng-class='{"blurb-inst":b.type}'><button class='btn-primary blurb-arrange-button' ng-click='moveLeft($index);'>&lt;</button><span ng-show='b.subtype'>{{b.type+':'+b.subtype}}</span></span><span ng-show='!b.subtype'>{{b}}</span><button class='btn-primary blurb-arrange-button' ng-click='moveRight($index);'>&gt;</button></span></div>
             <hr>
         </div>
         <div class='row'>
@@ -130,7 +130,7 @@
             <br>
             <br>
             <hr/>
-            <div id='output' class='jumbotron'>{{fullStr}}</div>
+            <div id='output' class='jumbotron' ng-bind-html='fullString'></div>
         </div>
         <br>
         <br>

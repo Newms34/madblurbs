@@ -8,13 +8,13 @@ Array.prototype.move = function(old_index, new_index) {
     this.splice(new_index, 0, this.splice(old_index, 1)[0]);
     return this; // for testing purposes
 }
-var app = angular.module('ml', []).controller('ml-con', function($scope, $q, $http) {
+var app = angular.module('ml', []).controller('ml-con', function($scope, $q, $http, $sce) {
     $scope.words = [];
     $scope.currWrdType = null;
     $scope.frags = [];
-    $scope.puncs=[];
-    $scope.puncTypes = ['.',',','!','?',';']
-    $scope.addPunc=false;
+    $scope.puncs = [];
+    $scope.puncTypes = ['.', ',', '!', '?', ';']
+    $scope.addPunc = false;
     $scope.currWrdSt = null;
     $scope.uriBase = 'https://en.wiktionary.org/w/api.php?action=query&list=categorymembers&cmlimit=500&cmnamespace=0&format=json&cmtitle=Category:'
     $scope.wrdConst = function(t, st, u) {
@@ -26,19 +26,19 @@ var app = angular.module('ml', []).controller('ml-con', function($scope, $q, $ht
     $scope.wordTypes = [{
         type: 'Noun',
         subtypes: [{
-            type: 'Countable Noun',
+            type: 'Countable',
             ex: 'Dog',
             actualType: 'English_countable_nouns'
         }, {
-            type: 'Uncountable Noun',
+            type: 'Uncountable',
             ex: 'Sheep',
             actualType: 'English_uncountable_nouns'
-        },{
-            type: 'Plural Noun',
+        }, {
+            type: 'Plural',
             ex: 'Cats',
             actualType: 'English_noun_plural_forms'
         }, {
-            type: 'Proper Noun',
+            type: 'Proper',
             ex: 'England',
             actualType: 'English_proper_nouns'
         }, {
@@ -99,11 +99,11 @@ var app = angular.module('ml', []).controller('ml-con', function($scope, $q, $ht
     }, {
         type: 'Adverb',
         subtypes: [{
-            type: 'Conjunctive Adverbs',
+            type: 'Conjunctive',
             ex: 'However',
             actualType: 'English_conjunctive_adverbs'
         }, {
-            type: 'Regular Adverbs',
+            type: 'Regular',
             ex: 'Quickly',
             actualType: 'English_adverbs'
         }]
@@ -117,7 +117,7 @@ var app = angular.module('ml', []).controller('ml-con', function($scope, $q, $ht
         return false;
     }
     $scope.moveLeft = function(n) {
-    	console.log(n)
+        console.log(n)
         $('#blurb-order').fadeOut(200, function() {
             if (n && n !== 0) {
                 $scope.allBlurbs.move(n, n - 1);
@@ -150,15 +150,22 @@ var app = angular.module('ml', []).controller('ml-con', function($scope, $q, $ht
         $scope.pickinWord = false;
         $scope.doBlurbs();
     };
-    $scope.addPunctuation = function(){
-    	$scope.puncs.push($scope.currPunc);
-    	$scope.addPunc=false;
-    	$scope.doBlurbs();
+    $scope.addPunctuation = function() {
+        $scope.puncs.push($scope.currPunc);
+        $scope.addPunc = false;
+        $scope.doBlurbs();
     }
     $scope.addFragment = function() {
         $scope.frags.push($scope.currFrag)
+        if (!$scope.currFrag || $scope.currFrag==''){
+        	bootbox.alert('You can\'t add a blank fragment!',function(){
+        		return true;
+        	})
+        }else{
+        	
         $scope.addFrag = false;
         $scope.doBlurbs();
+        }
     };
     $scope.removeWord = function(n) {
         $scope.words.splice(n, 1);
@@ -170,19 +177,19 @@ var app = angular.module('ml', []).controller('ml-con', function($scope, $q, $ht
     };
     $scope.alliterate = false;
     $scope.autocap = true;
-        $scope.fullStr = 'The quick brown fox jumps over the lazy dog';
+    $scope.fullStr = 'The quick brown fox jumps over the lazy dog';
     $scope.makeSentence = function() {
         console.log($scope.allBlurbs);
         var wrdProms = [];
-        var whichLet = '&cmsort=sortkey&cmstartsortkeyprefix='+String.fromCharCode(Math.floor(Math.random()*26)+65);//in case of alliterating!
+        var whichLet = '&cmsort=sortkey&cmstartsortkeyprefix=' + String.fromCharCode(Math.floor(Math.random() * 26) + 65); //in case of alliterating!
         for (var i = 0; i < $scope.allBlurbs.length; i++) {
             if (typeof $scope.allBlurbs[i] != 'string') {
                 // $.ajax({method:'GET',url:})
-                if (!$scope.alliterate) whichLet = '&cmsort=sortkey&cmstartsortkeyprefix='+String.fromCharCode(Math.floor(Math.random()*26)+65);
+                if (!$scope.alliterate) whichLet = '&cmsort=sortkey&cmstartsortkeyprefix=' + String.fromCharCode(Math.floor(Math.random() * 26) + 65);
                 wrdProms.push(
                     $.ajax({
                         method: 'GET',
-                        url: $scope.uriBase + $scope.allBlurbs[i].uri+whichLet,
+                        url: $scope.uriBase + $scope.allBlurbs[i].uri + whichLet,
                         dataType: 'jsonp'
                     })
                 );
@@ -190,35 +197,37 @@ var app = angular.module('ml', []).controller('ml-con', function($scope, $q, $ht
         }
         $q.all(wrdProms).then(function(r) {
             console.log(r);
-            $scope.fullStr='';
-            var currRemoteWrd=0;
-            for(i=0;i<$scope.allBlurbs.length;i++){
-            	var newBit;
-            	if (typeof $scope.allBlurbs[i] == 'string') {
-            		newBit=$scope.allBlurbs[i]+' ';
-            	}else{
-            		newBit=r[currRemoteWrd].query.categorymembers[Math.floor(Math.random()*r[currRemoteWrd].query.categorymembers.length)].title+' ';
-            		currRemoteWrd++;
-            	}
-            	if($scope.autocap){
-            		//auto-capitalization
-            		if (i==0 || ($scope.fullStr[$scope.fullStr.length-2].match(/\!|.|\,|\?|\;/).length>1)){
-            			newBit = newBit[0].toUpperCase()+newBit.slice(1);
-            		}
-            	}
-            	$scope.fullStr+=newBit;
+            $scope.fullStr = '';
+            var currRemoteWrd = 0;
+            for (i = 0; i < $scope.allBlurbs.length; i++) {
+                var newBit;
+                if (typeof $scope.allBlurbs[i] == 'string') {
+                    newBit = $scope.allBlurbs[i] + ' ';
+                } else {
+                    var wrd = r[currRemoteWrd].query.categorymembers[Math.floor(Math.random() * r[currRemoteWrd].query.categorymembers.length)].title;
+                    newBit = '<a href="https://en.wiktionary.org/wiki/' + wrd + '" target="_blank">' + wrd + '</a> ';
+                    currRemoteWrd++;
+                }
+                if ($scope.autocap) {
+                    //auto-capitalization
+                    if (i == 0 || ($scope.fullStr[$scope.fullStr.length - 2].match(/\!|.|\,|\?|\;/).length > 1)) {
+                        newBit = newBit[0].toUpperCase() + newBit.slice(1);
+                    }
+                }
+                $scope.fullStr += newBit;
             }
+            $scope.fullString = $sce.trustAsHtml($scope.fullStr);
         })
     }
-    $scope.clearIt = function(){
-    	bootbox.confirm('Are you sure you wanna clear everything (Words, Fragments, and Punctuation)?',function(r){
-    		if (r && r!=null){
-    			$scope.allBlurbs = [];
-    			$scope.words = [];
-    			$scope.frags = [];
-    			$scope.puncs = [];
-    			$scope.$digest();
-    		}
-    	})
+    $scope.clearIt = function() {
+        bootbox.confirm('Are you sure you wanna clear everything (Words, Fragments, and Punctuation)?', function(r) {
+            if (r && r != null) {
+                $scope.allBlurbs = [];
+                $scope.words = [];
+                $scope.frags = [];
+                $scope.puncs = [];
+                $scope.$digest();
+            }
+        })
     }
 });
