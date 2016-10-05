@@ -68,6 +68,14 @@ var app = angular.module('ml', []).controller('ml-con', function($scope, $q, $ht
             type: 'Superlative',
             ex: 'Smallest',
             actualType: 'English_adjective_superlative_forms'
+        },{
+            type: 'Past Participle',
+            ex: 'Risen',
+            actualType: 'English_past_participles'
+        }, {
+            type: 'Present Participle',
+            ex: 'Eating',
+            actualType: 'English_present_participles'
         }]
     }, {
         type: 'Verb',
@@ -83,10 +91,6 @@ var app = angular.module('ml', []).controller('ml-con', function($scope, $q, $ht
             type: 'Present Intransitive',
             ex: 'Exist',
             actualType: 'English_intransitive_verbs'
-        }, {
-            type: 'Present Participle',
-            ex: 'Eating',
-            actualType: 'English_present_participles'
         }, {
             type: '3rd sg. Present',
             ex: 'Thinks',
@@ -157,14 +161,14 @@ var app = angular.module('ml', []).controller('ml-con', function($scope, $q, $ht
     }
     $scope.addFragment = function() {
         $scope.frags.push($scope.currFrag)
-        if (!$scope.currFrag || $scope.currFrag==''){
-        	bootbox.alert('You can\'t add a blank fragment!',function(){
-        		return true;
-        	})
-        }else{
-        	
-        $scope.addFrag = false;
-        $scope.doBlurbs();
+        if (!$scope.currFrag || $scope.currFrag == '') {
+            bootbox.alert('You can\'t add a blank fragment!', function() {
+                return true;
+            })
+        } else {
+
+            $scope.addFrag = false;
+            $scope.doBlurbs();
         }
     };
     $scope.removeWord = function(n) {
@@ -177,7 +181,7 @@ var app = angular.module('ml', []).controller('ml-con', function($scope, $q, $ht
     };
     $scope.alliterate = false;
     $scope.autocap = true;
-    $scope.fullStr = 'The quick brown fox jumps over the lazy dog';
+    $scope.fullString = 'The quick brown fox jumps over the lazy dog';
     $scope.makeSentence = function() {
         console.log($scope.allBlurbs);
         var wrdProms = [];

@@ -37,3 +37,9 @@ table,tbody{
 .one-blurb:hover > .blurb-arrange-button{
 	opacity:1;
 }
+.wrd-test-box{
+	font-style: italic;
+}
+.bad-wurdz{
+	background:#fcc;
+}

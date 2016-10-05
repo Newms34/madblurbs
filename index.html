@@ -10,11 +10,10 @@
 <body ng-app='ml' ng-controller='ml-con'>
     <div class='container'>
         <div class='row'>
-        <button class='btn btn-danger btn-lg' ng-click='clearIt();' ng-disabled = '!allBlurbs.length'>
-                    X Clear All</button>
+            <button class='btn btn-danger btn-lg' ng-click='clearIt();' ng-disabled='!allBlurbs.length'>
+                X Clear All</button>
             <h3>Words:</h3>
             <div id='main' class='col-md-8 offset-md-4'>
-                
                 <table class='table table-striped'>
                     <thead>
                         <tr>
@@ -117,7 +116,12 @@
         <div class='row'>
             <h3>Arrangement</h3>
             <hr>
-            <div class='jumbotron' id='blurb-order'><span ng-repeat='b in allBlurbs' class='one-blurb' ng-class='{"blurb-inst":b.type}'><button class='btn-primary blurb-arrange-button' ng-click='moveLeft($index);'>&lt;</button><span ng-show='b.subtype'>{{b.type+':'+b.subtype}}</span></span><span ng-show='!b.subtype'>{{b}}</span><button class='btn-primary blurb-arrange-button' ng-click='moveRight($index);'>&gt;</button></span></div>
+            <div class='jumbotron' id='blurb-order'>
+                <span ng-repeat='b in allBlurbs' class='one-blurb' ng-class='{"blurb-inst":b.type}'><button class='btn-primary blurb-arrange-button' ng-click='moveLeft($index);'>&lt;</button><span ng-show='b.subtype'>{{b.type+':'+b.subtype}}</span><span ng-show='!b.subtype'>{{b}}</span>
+                <button class='btn-primary blurb-arrange-button' ng-click='moveRight($index);'>&gt;</button>
+                </span>
+                </span>
+            </div>
             <hr>
         </div>
         <div class='row'>

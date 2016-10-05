@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Sentence Tests!</title>
+    <link rel="stylesheet" type="text/css" href="./css/style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
+
+<body>
+
+    <body ng-app='sentest' ng-controller='sen-con' ng-cloak>
+        <br>
+        <div class='panel panel-info container'>
+            <hr>
+            <button class='btn btn-success' ng-click='getSent();'>Get A Sentence!</button>
+            <button class='btn btn-danger pull-right' ng-click='checkSent();'>Check A Sentence!</button>
+            <h3>Sentence Parts:</h3>
+            <h4>Put a word in each box that matches the grammar type!</h4>
+            <table class='table'>
+                <tr>
+                    <td ng-repeat='wrd in currSent.order'>
+                        <input type="text" id='inp{{wrd}}' ng-model='currSent.text[wrd]' ng-show='currSent && isGrammar(wrd)'><span ng-show='currSent && !isGrammar(wrd)'>{{wrd}}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-repeat='w in currSent.order' id='inp+{{w}}' class='wrd-test-box'><span ng-show='currSent && isGrammar(w)'>{{w}}</span> &nbsp;</td>
+
+                </tr>
+                <tr ng-show='checked'>
+                    <td ng-repeat='c in currCheck'><span ng-if='c==1'>&#10003;</span><span ng-if='!c || c==0'>&#10008;</span></td>
+                </tr>
+            </table>
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+        <script src="./js/bootbox.min.js"></script>
+        <script src="./js/test.js"></script>
+    </body>
+
+</html>
