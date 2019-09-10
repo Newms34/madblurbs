@@ -19,16 +19,16 @@
             <h4>Put a word in each box that matches the grammar type!</h4>
             <table class='table'>
                 <tr>
-                    <td ng-repeat='wrd in currSent.order'>
+                    <td ng-repeat='wrd in currSent.order' ng-class="{'btn-danger':currBads[$index]=='yes'}">
                         <input type="text" id='inp{{wrd}}' ng-model='currSent.text[wrd]' ng-show='currSent && isGrammar(wrd)'><span ng-show='currSent && !isGrammar(wrd)'>{{wrd}}</span>
                     </td>
                 </tr>
                 <tr>
-                    <td ng-repeat='w in currSent.order' id='inp+{{w}}' class='wrd-test-box'><span ng-show='currSent && isGrammar(w)'>{{w}}</span> &nbsp;</td>
+                    <td ng-repeat='w in currSent.order' id='inp+{{w}}' class='wrd-test-box' ng-class="{'btn-danger':currBads[$index]=='yes'}"><span ng-show='currSent && isGrammar(w)'>{{w}}</span> &nbsp;</td>
 
                 </tr>
                 <tr ng-show='checked'>
-                    <td ng-repeat='c in currCheck'><span ng-if='c==1'>&#10003;</span><span ng-if='!c || c==0'>&#10008;</span></td>
+                    <td ng-repeat='c in currCheck' ng-class="{'btn-danger':currBads[$index]=='yes'}"><span ng-if='c==1'>&#10003;</span><span ng-if='!c || c==0'>&#10008;</span></td>
                 </tr>
             </table>
         </div>

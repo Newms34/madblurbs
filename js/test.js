@@ -5,6 +5,7 @@ var app = angular.module('sentest', []).controller('sen-con', function($scope, $
     $scope.words = [];
     $scope.currSentNum = -1;
     $scope.currSent = null;
+    $scope.currBads = [];
     $scope.currCheck = {};
     $scope.sentences = [{
         text: {},
@@ -114,15 +115,17 @@ var app = angular.module('sentest', []).controller('sen-con', function($scope, $
     }];
     $scope.getSent = function() {
         $scope.currSentNum++;
-        $scope.checked=false;
+        $scope.checked = false;
+        $scope.currBads = [];
         $scope.currCheck = {}; //empty check object
         $scope.currSent = $scope.sentences[$scope.currSentNum] ? $scope.sentences[$scope.currSentNum] : null;
         console.log(typeof $scope.currSent)
         $scope.currSent.order.forEach(function(w) {
             $scope.currCheck[w] = $scope.isGrammar(w) ? 1 : 2;
+            $scope.currBads.push('no');
         })
     };
-    $scope.isGrammar = function(w,m) {
+    $scope.isGrammar = function(w, m) {
         w = w.split(': ');
         // console.log(w)
         var foundType = false,
@@ -137,18 +140,18 @@ var app = angular.module('sentest', []).controller('sen-con', function($scope, $
         } else {
             for (i = 0; i < $scope.wordTypes[foundType - 1].subtypes.length; i++) {
                 if ($scope.wordTypes[foundType - 1].subtypes[i].type == w[1]) {
-                    foundSubType = i+1;//again, +1 so not falsey
+                    foundSubType = i + 1; //again, +1 so not falsey
                 }
             }
         }
-        return m?[foundType-1,foundSubType-1]:foundSubType;
+        return m ? [foundType - 1, foundSubType - 1] : foundSubType;
     }
     $scope.uriBase = 'https://en.wiktionary.org/w/api.php?action=query&prop=categories&format=json&cllimit=500&titles=';
-    $scope.checkCat = function(a,c) {
-        var theCat = $scope.wordTypes[c[0]].subtypes[c[1]].actualType.replace(/_/g,' ');
-        console.log(a,c,c[0],c[1],'MEOW!',theCat);
-        for (var i=0;i<a.length;i++){
-            if (a[i].title=='Category:'+theCat) return true;
+    $scope.checkCat = function(a, c) {
+        var theCat = $scope.wordTypes[c[0]].subtypes[c[1]].actualType.replace(/_/g, ' ');
+        console.log(a, c, c[0], c[1], 'MEOW!', theCat);
+        for (var i = 0; i < a.length; i++) {
+            if (a[i].title == 'Category:' + theCat) return true;
         }
         return false;
     }
@@ -163,9 +166,11 @@ var app = angular.module('sentest', []).controller('sen-con', function($scope, $
         var wordProms = [];
         for (var word in actualWords) {
             //first, if it's a name, we need to capitalize it. This deals with certain English words like "josh", which are both names AND regular words.
+            //wiktionary, while it distinguishes between the two, has no way of telling which you mean!
             if (word.indexOf('Name') != -1) {
                 $scope.currSent.text[word] = $scope.currSent.text[word].initCaps();
-            }else if($scope.currSent.text[word]){
+            } else if ($scope.currSent.text[word]) {
+                //otherwise, we convert everything to lower case
                 $scope.currSent.text[word] = $scope.currSent.text[word].toLowerCase();
             }
             if (actualWords[word]) {
@@ -177,32 +182,32 @@ var app = angular.module('sentest', []).controller('sen-con', function($scope, $
             }
         }
         $q.all(wordProms).then(function(c) {
-            console.log('RESULT:', c);
-            console.log(c.length, Object.keys($scope.currSent.text).length, Object.keys(actualWords).length)
-            console.log('czech', $scope.currCheck)
             var currSentWords = Object.keys($scope.currSent.text);
-            for (var i = 0,j=0; i < Object.keys(actualWords).length; i++) {
+            for (var i = 0, j = 0; i < Object.keys(actualWords).length; i++) {
                 if ($scope.currSent.text[Object.keys(actualWords)[i]]) {
                     //this word should be checked.
                     if (c[j].query.pages[-1]) {
                         //word doesnt exist!
                         console.log(c[j].query, 'NOT A WORD')
                         $scope.currCheck[currSentWords[i]] = 0;
-                    }else{
+                    } else {
                         //word exists! check to make sure it's got the correct category
-  
-                        var actualCatArr =$scope.isGrammar(Object.keys($scope.currSent.text)[j],true);
-                        $scope.currCheck[currSentWords[j]] = $scope.checkCat(c[j].query.pages[Object.keys(c[j].query.pages)[0]].categories,actualCatArr)?1:0;
-
+                        var actualCatArr = $scope.isGrammar(Object.keys($scope.currSent.text)[j], true);
+                        if ($scope.checkCat(c[j].query.pages[Object.keys(c[j].query.pages)[0]].categories, actualCatArr)) {
+                            $scope.currCheck[currSentWords[j]] = 1;
+                            $scope.currBads[i] = 'no';
+                        } else {
+                            $scope.currCheck[currSentWords[j]] = 0;
+                            $scope.currBads[i] = 'yes';
+                        }
                     }
-                    console.log('THIS WORD IS:',$scope.currSent.text[Object.keys(actualWords)[i]])
                     j++;
-                }else{
+                } else {
                     //this word should NOT be checked, as its a 'helper' word
-                    $scope.currCheck[Object.keys(actualWords)[i]]=2;
+                    $scope.currCheck[Object.keys(actualWords)[i]] = 2;
                 }
             }
-            console.log('FINAL LIST', $scope.currCheck)
+            console.log('WORD ARR NOW', $scope.currSent.text)
             $scope.checked = true;
         })
     }
